@@ -19,7 +19,7 @@ namespace bot {
 			this->sock_->run(msg_handler);
 		});
 
-		api::user_token = token_;
+    api::Token::SetToken(token_);
 	}
 
 	client::~client() noexcept {

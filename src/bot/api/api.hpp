@@ -14,9 +14,36 @@
 
 namespace bot {
     namespace api {
-      namespace {
-        std::string user_token;
-      }
+      class Token {
+      public:
+        Token(const Token&) = delete;
+
+        static Token& Get() {
+          static Token instance;
+          return instance;
+        }
+
+        inline static std::string GetToken() {
+          return Get().IGetToken();
+        }
+
+        inline static void SetToken(const std::string& token) {
+          Get().ISetToken(token);
+        }
+
+      private:
+        Token() = default;
+
+        std::string IGetToken() {
+          return token_;
+        }
+
+        void ISetToken(const std::string& token) {
+          token_ = token;
+        }
+      private:
+        std::string token_;
+      };
 
       inline std::string JsonStringify(rapidjson::Document& json) {
         rapidjson::StringBuffer strbuf;
@@ -29,19 +56,19 @@ namespace bot {
       }
 
       inline cpr::Response ApiGet(const std::string& url) {
-        return cpr::Get(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Header{{"authorization", user_token}, {"Content-Type", "Application/Json"}});
+        return cpr::Get(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Header{{"authorization", Token::GetToken()}, {"Content-Type", "Application/Json"}});
       }
 
       inline cpr::Response ApiPost(const std::string& url, const std::string& body) {
-        return cpr::Post(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Body{body}, cpr::Header{{"authorization", user_token}, {"Content-Type", "Application/Json"}});
+        return cpr::Post(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Body{body}, cpr::Header{{"authorization", Token::GetToken()}, {"Content-Type", "Application/Json"}});
       }
 
       inline cpr::Response ApiPatch(const std::string& url, const std::string& body) {
-        return cpr::Patch(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Body{body}, cpr::Header{{"authorization", user_token}, {"Content-Type", "Application/Json"}});
+        return cpr::Patch(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Body{body}, cpr::Header{{"authorization", Token::GetToken()}, {"Content-Type", "Application/Json"}});
       }
 
       inline cpr::Response ApiDelete(const std::string& url) {
-        return cpr::Delete(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Header{{"authorization", user_token}, {"Content-Type", "Application/Json"}});
+        return cpr::Delete(cpr::Url{fmt::format("https://discordapp.com/api/v9/{0}", url)}, cpr::Header{{"authorization", Token::GetToken()}, {"Content-Type", "Application/Json"}});
       }
     }
 }

@@ -13,14 +13,17 @@ namespace bot {
 			for (auto it = result.first; it != result.second; it++) {
 				handlerC++;
 
-				std::cout << "Handling event: " << event << "\n";
-				std::invoke(it->second, payload);
+        std::invoke(it->second, payload);
+#ifndef NDEBUG
+				std::cout << "Handled event: " << event << "\n";
+
 			}
 
 			if (handlerC < 1) {
 				std::cerr << "Unkown event occured: " << event << "\n";
 			}
-		}
+#endif
+    }
 
 		void handler::AddEventHandler(std::string eventname, handler::event_handler_t handler) {
 			events_.insert(std::pair<std::string, event_handler_t>(std::move(eventname), std::move(handler)));
